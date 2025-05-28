@@ -1,5 +1,6 @@
-import BaseTemplate, {type UpdateProgressStatus, type UploadFun} from "$lib/BaseTemplate";
+
 import type DataColumn from "$lib/DataColumn";
+import BaseUploadTemplate, {type UpdateProgressStatus, type UploadFun} from "$lib/BaseUploadTemplate";
 
 let columns: Array<DataColumn> = [
     {
@@ -48,7 +49,7 @@ let columns: Array<DataColumn> = [
         align: "center"
     }
 ]
-export default class EmployeesTemplate extends BaseTemplate {
+export default class EmployeesTemplate extends BaseUploadTemplate {
 
     constructor(uploadFun: UploadFun, batchSize: number = 50, rowOffset: number = 1) {
         super(columns, uploadFun, batchSize, rowOffset);

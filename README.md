@@ -29,10 +29,10 @@ npm i @ticatec/batch-data-uploader
 Extend `BaseTemplate`, provide field definitions and upload logic, and optionally override `consolidateData` to process data.
 
 ```ts
-import BaseTemplate from '$lib/BaseTemplate';
-import type DataColumn from './DataColumn';
+import BaseUploadTemplate from '@ticatec/batch-data-uploader/BaseUploadTemplate';
+import type DataColumn from '@ticatec/batch-data-uploader/DataColumn';
 
-class MyDataTemplate extends BaseTemplate {
+class MyDataTemplate extends BaseUploadTemplate {
   constructor(uploadFun: UploadFun) {
     const columns: DataColumn[] = [
       { text: 'Name', field: 'name', pos: 0 },

@@ -29,10 +29,10 @@ npm i @ticatec/batch-data-uploader
 继承自 `BaseTemplate`，传入字段定义、上传逻辑，并可选地重载 `consolidateData` 处理数据。
 
 ```ts
-import BaseTemplate from '$lib/BaseTemplate';
+import BaseUploadTemplate from '@ticatec//BaseUploadTemplate';
 import type DataColumn from './DataColumn';
 
-class MyDataTemplate extends BaseTemplate {
+class MyDataTemplate extends BaseUploadTemplate {
   constructor(uploadFun: UploadFun) {
     const columns: DataColumn[] = [
       { text: 'Name', field: 'name', pos: 0 },

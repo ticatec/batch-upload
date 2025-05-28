@@ -42,6 +42,10 @@
       "types": "./dist/BaseTemplate.d.ts",
       "import": "./dist/BaseTemplate.js"
     },
+    "./BaseUploadTemplate": {
+      "types": "./dist/BaseUploadTemplate.d.ts",
+      "import": "./dist/BaseUploadTemplate.js"
+    },
     "./DataColumn": {
       "types": "./dist/DataColumn.d.ts",
       "import": "./dist/DataColumn.js"

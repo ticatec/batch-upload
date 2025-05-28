@@ -8,6 +8,7 @@
     import type BaseTemplate from "$lib/BaseTemplate";
     import type DataColumn from "@ticatec/uniface-element/DataTable";
     import i18nKeys from "$lib/i18n_resources/i18nKeys";
+    import type BaseUploadTemplate from "$lib/BaseUploadTemplate.js";
 
     export let title: string;
 
@@ -15,7 +16,7 @@
     export let height: string = "600px"
 
     export let closeHandler: any;
-    export let template: BaseTemplate;
+    export let template: BaseUploadTemplate;
 
     type ProcessStatus = 'Init' | 'Pending' | 'Uploading' | 'Done';  //初始状态，待上传，上传中，处理完成
 
