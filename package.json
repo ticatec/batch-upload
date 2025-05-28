@@ -1,0 +1,83 @@
+{
+  "name": "@ticatec/batch-data-uploader",
+  "version": "0.0.2",
+  "description": "A reusable Svelte component for batch uploading Excel data with support for error handling, multi-language, and preprocessing.",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "svelte-kit sync && svelte-package",
+    "package": "svelte-kit sync && svelte-package && publint",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "publish:public": "npm run build && npm publish --access public"
+  },
+  "keywords": [
+    "excel",
+    "upload",
+    "svelte",
+    "component",
+    "batch",
+    "uploader",
+    "xlsx",
+    "i18n"
+  ],
+  "files": [
+    "dist",
+    "!dist/**/*.scss",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "dist/index.js",
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./BaseTemplate": {
+      "types": "./dist/BaseTemplate.d.ts",
+      "import": "./dist/BaseTemplate.js"
+    },
+    "./DataColumn": {
+      "types": "./dist/DataColumn.d.ts",
+      "import": "./dist/DataColumn.js"
+    },
+    "./FileUploadWizard.svelte": {
+      "types": "./dist/FileUploadWizard.svelte.d.ts",
+      "import": "./dist/FileUploadWizard.svelte"
+    }
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^4.0.0",
+    "@sveltejs/adapter-static": "^3.0.8",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@ticatec/i18n": "^0.0.8",
+    "@ticatec/uniface-element": "^0.1.52",
+    "@ticatec/uniface-google-material-icons": "^0.1.2",
+    "dayjs": "^1.11.10",
+    "publint": "^0.3.2",
+    "sass": "^1.57.1",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "svelte-portal": "^2.2.1",
+    "svelte-preprocess": "^6.0.3",
+    "tslib": "^2.3.1",
+    "typescript": "^5.7.3",
+    "vite": "^5.4.11"
+  },
+  "author": "Henry Feng",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}
