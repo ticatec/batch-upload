@@ -1,6 +1,6 @@
 {
   "name": "@ticatec/batch-data-uploader",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A reusable Svelte component for batch uploading Excel data with support for error handling, multi-language, and preprocessing.",
   "scripts": {
     "dev": "vite dev",
@@ -45,6 +45,10 @@
     "./BaseUploadTemplate": {
       "types": "./dist/BaseUploadTemplate.d.ts",
       "import": "./dist/BaseUploadTemplate.js"
+    },
+    "./BaseLoadTemplate": {
+      "types": "./dist/BaseLoadTemplate.d.ts",
+      "import": "./dist/BaseLoadTemplate.js"
     },
     "./DataColumn": {
       "types": "./dist/DataColumn.d.ts",

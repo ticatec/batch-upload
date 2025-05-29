@@ -43,7 +43,7 @@ export default abstract class BaseTemplate {
 
         const rows: any[] = [];
 
-        for (let rowIndex = range.s.r + 1 + this.rowOffset; rowIndex <= range.e.r; rowIndex++) {
+        for (let rowIndex = range.s.r + this.rowOffset; rowIndex <= range.e.r; rowIndex++) {
             const rowObject: any = {};
 
             for (const colDef of this._columns) {
