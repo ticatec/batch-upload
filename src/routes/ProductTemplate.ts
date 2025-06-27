@@ -1,7 +1,5 @@
-
+import BaseEncodingTemplate from "$lib/BaseEncodingTemplate";
 import type DataColumn from "$lib/DataColumn";
-import BaseUploadTemplate, {type UploadFun} from "$lib/BaseUploadTemplate";
-
 
 let columns: Array<DataColumn> = [
     {
@@ -9,12 +7,6 @@ let columns: Array<DataColumn> = [
         text: '商户名称',
         width: 20,
         visible: false
-    },
-    {
-        field: 'code',
-        text: '商品编码',
-        width: 120,
-        resizable: true
     },
     {
         field: 'barcode',
@@ -63,13 +55,35 @@ let columns: Array<DataColumn> = [
         text: '有效期管理',
         width: 80,
         align: "center",
-        parser: (text: string) => text == '是' || text.toLowerCase().trim() == 'yes' || text.toLowerCase().trim() == 'y'
+        parser: (text: string) => text == '是' || text.toLowerCase().trim() == 'yes' || text.toLowerCase().trim() == 'y',
+        formatter: (value) => value ? 'Yes' : 'No'
     }
 ]
-export default class EmployeesTemplate extends BaseUploadTemplate {
 
-    constructor(uploadFun: UploadFun, batchSize: number = 50, rowOffset: number = 1) {
-        super(columns, uploadFun, batchSize, rowOffset);
+export default class ProductTemplate extends BaseEncodingTemplate {
+
+    constructor() {
+        super(columns);
+    }
+
+    protected isDataValid(row: any): boolean {
+        return row.code != null;
+    }
+    protected encodeData(rows: Array<any>): Promise<Array<any>> {
+        return new Promise((resolve) => {
+            let list = rows.map(item=> {
+                let tmp = JSON.parse(JSON.stringify(item));
+                if (Math.random() > 0.05) {
+                    tmp.code = ((new Date()).getTime() * 10000 + Math.floor(Math.random() * 10000)).toString(36);
+                }
+                return tmp;
+            });
+            setTimeout(()=> {resolve(list)}, 1000);
+        })
+    }
+
+    get valid(): boolean {
+        return this._list.filter(item=>item.code==null).length == 0;
     }
 
 }

@@ -1,154 +1,107 @@
-# Excel Batch Data Upload Component
+# Excel Data Batch Upload Processing Component / Data Recognition Component
 
-[[中文文档](./README_CN.md)]
+## [中文文档](./README_CN.md)
 
-This component is designed to batch import data from Excel files and handle uploads. It supports upload status management, exporting error rows, multilingual adaptation, data preprocessing, and more. By defining template classes and using a unified UI dialog component, it enables quick adaptation for various types of Excel data upload needs.
+# @ticatec/batch-data-uploader
 
-## Features
-
-* Parse `.xls` / `.xlsx` files
-* Custom column mapping and formatting
-* Batch upload with configurable batch size
-* Extensible data preprocessing logic (e.g., merging, grouping)
-* Upload status display: Pending, Uploading, Success, Failed
-* Export error rows to Excel
-* Multilingual support (based on `@ticatec/i18n`)
+A universal Svelte component for batch data uploading, supporting Excel file parsing, local preprocessing, field mapping validation, multilingual prompts, import validation, and error messaging.
 
 ---
 
-## Usage
+## ✨ Features
 
-### Installation
+- 📂 Supports drag-and-drop and file selection for uploading `.xlsx` files
+- 🧠 Local parsing of Excel data without server preprocessing
+- 🧩 Supports field mapping and custom parsers
+- 📝 Data preview and validation with highlighted error prompts
+- 🌐 Multilingual support (built-in Chinese and English)
+- 🔌 Compatible with the UI element style of `@ticatec/uniface-element`
+
+---
+
+## 📦 Installation
 
 ```bash
-npm i @ticatec/batch-data-uploader
-```
-
-### 1. Define a Template Class
-
-Extend `BaseTemplate`, provide field definitions and upload logic, and optionally override `consolidateData` to process data.
-
-```ts
-import BaseUploadTemplate from '@ticatec/batch-data-uploader/BaseUploadTemplate';
-import type DataColumn from '@ticatec/batch-data-uploader/DataColumn';
-
-class MyDataTemplate extends BaseUploadTemplate {
-  constructor(uploadFun: UploadFun) {
-    const columns: DataColumn[] = [
-      { text: 'Name', field: 'name', pos: 0 },
-      { text: 'Email', field: 'email', pos: 1 },
-      { text: 'Age', field: 'age', pos: 2, parser: val => parseInt(val) },
-    ];
-    super(columns, uploadFun, 50);
-  }
-
-  // Optional: Override to implement merge/group logic
-  protected consolidateData(rows: Array<any>) {
-    return super.consolidateData(rows);
-  }
-}
-```
-
-### 2. Use the Upload Dialog Component
-
-```svelte
-<script lang="ts">
-  import UploadDialog from './UploadDialog.svelte';
-  import { MyDataTemplate } from './MyDataTemplate';
-
-  let showDialog = false;
-
-  function doUpload(rows: any[]): Promise<void> {
-    const dataChunk = rows.map(row => row.data);
-    return fetch('/api/upload', {
-      method: 'POST',
-      body: JSON.stringify(dataChunk),
-    }).then(res => {
-      if (!res.ok) throw new Error('Upload failed');
-      // After upload, write result info to row.error if needed
-    });
-  }
-
-  const template = new MyDataTemplate(doUpload);
-  
-  const showUploadDialog = () => {
-    window.Dialog.showModal(UploadDialog, {
-      title: 'Batch Add Employees',
-      template,
-    });
-  }
-</script>
-
-<button on:click={() => showUploadDialog()}>Import Data</button>
+npm install @ticatec/batch-data-uploader xlsx
 ```
 
 ---
 
-## Parameter Reference
+## 📁 Project Structure
 
-### `BaseTemplate` Constructor Parameters
+The main components and classes are as follows:
 
-| Name        | Type                            | Description                                  |
-| ----------- | ------------------------------- | -------------------------------------------- |
-| `columns`   | `DataColumn[]`                  | Defines column position and format           |
-| `uploadFun` | `(arr: any[]) => Promise<void>` | Upload function, called in batches           |
-| `batchSize` | `number` (default: 50)          | Number of rows per upload batch              |
-| `rowOffset` | `number` (default: 1)           | Row offset for data start (e.g. skip header) |
+| File                       | Description                                            |
+| -------------------------- | ----------------------------------------------------- |
+| `FileUploadWizard.svelte`  | Main upload dialog, uses `BaseUploadTemplate` to upload and validate data |
+| `EncodingWizard.svelte`   | Field mapping dialog, uses `BaseEncodingTemplate` to map Excel fields |
+| `BaseTemplate.ts`         | Abstract base class encapsulating Excel parsing and column definition logic |
+| `BaseUploadTemplate.ts`   | Upload template base class for validation, preprocessing, and data uploading |
+| `BaseEncodingTemplate.ts` | Encoding template base class for dynamic field mapping and transformation |
+| `utils.ts`                | Utility functions, such as `setNestedValue` and `getNestedValue` |
+| `i18n_resources`          | Multilingual resource definitions, supporting Chinese and English switching |
 
-### `DataColumn` Interface
+---
 
-```ts
-interface DataColumn {
-  text: string;                // Column display text
-  field: string;               // Data field path (supports nesting)
-  pos: number;                 // Excel column index (starting from 0)
-  parser?: (val: any) => any;  // Optional parser function for cell values
+## 🚀 Usage
+
+### Batch Data Upload
+
+[Implementing Batch Data Upload](./documents/FileUploadWizard.md)
+
+### Data Parsing and Validation
+
+[Implementing Data Parsing and Validation](./documents/EncodingWizard.md)
+
+## 🌐 Multilingual Support
+
+By leveraging `@ticatec/i18n` and `i18n_resources`, automatic switching between Chinese and English is supported. You can customize internationalization by extending `i18nKeys` and resource files.
+
+English resource file, loadable via i18n tools:
+
+```json
+{
+    "batchUploading": {
+        "status": {
+            "pending": "To upload",
+            "uploading": "Uploading...",
+            "successful": "Success",
+            "fail": "Failure"
+        },
+        "parsing": "Parsing file...",
+        "parseFailure": "Cannot parse file: {{name}}",
+        "waitUploading": "Cannot exit during uploading!",
+        "button": {
+            "upload": "Upload",
+            "save": "Save error data",
+            "open": "Open",
+            "confirm": "Confirm"
+        },
+        "errorTitle": "Error",
+        "sheetName": "Abnormal data",
+        "labelStatus": "Status",
+        "labelValid": "Validity",
+        "textValid": "Yes",
+        "textInvalid": "No"
+    }
 }
 ```
 
 ---
 
-## Upload Workflow
+## 🧪 Examples
 
-1. User selects an Excel file
-2. Call `BaseTemplate.parseExcelFile(file)` to parse data
-3. Display preview data table with `Pending` status
-4. User clicks upload, system calls `uploadFun` in batches
-5. Mark successful items, retain `error` info for failed items
-6. Failed rows can be exported to Excel
+Refer to the `src/routes/+page.svelte` example page for a complete usage flow and template definitions.
 
 ---
 
-## Exporting Error Data
+## 🪪 License
 
-Use `BaseTemplate.exportErrorRowsToExcel(filename: string)` to export rows with errors as an Excel file, including original columns and error messages.
-
----
-
-## Customization Options
-
-* **Custom Column Display**: Define column fields and formatting functions
-* **Custom Status Field**: Built-in `status` column, can be customized per business needs
-* **Data Cleaning & Validation**: Implement in `consolidateData()` method
-* **Multilingual Text**: Use `getI18nText` from `@ticatec/i18n`
-
----
-
-## Dependencies
-
-* [`xlsx`](https://www.npmjs.com/package/xlsx)
-* [`@ticatec/uniface-element`](https://www.npmjs.com/package/@ticatec/uniface-element)
-* [`@ticatec/i18n`](https://www.npmjs.com/package/@ticatec/i18n)
-
----
-
-## License
-
-MIT License.
+MIT License © Ticatec
 
 ---
 
 ## Author
 
-Henry Feng
-[huili.f@gmail.com](mailto:huili.f@gmail.com)
+Henry Feng  
+huili.f@gmail.com

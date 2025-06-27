@@ -19,6 +19,14 @@ const i18nKeys = {
             text: langRes.batchUploading.status.fail
         }
     },
+    labelValid: {
+        key: 'batchUploading.labelValid',
+        text: langRes.batchUploading.labelValid
+    },
+    labelStatus: {
+        key: 'batchUploading.labelStatus',
+        text: langRes.batchUploading.labelStatus
+    },
     parsing: {
         key: 'batchUploading.parsing',
         text: langRes.batchUploading.parsing
@@ -43,6 +51,10 @@ const i18nKeys = {
         open: {
             key: 'batchUploading.button.open',
             text: langRes.batchUploading.button.open
+        },
+        confirm: {
+            key: 'batchUploading.button.confirm',
+            text: langRes.batchUploading.button.confirm
         }
     },
     errorTitle: {
@@ -52,6 +64,14 @@ const i18nKeys = {
     sheetName: {
         key: 'batchUploading.sheetName',
         text: langRes.batchUploading.sheetName
+    },
+    textValid: {
+        key: 'batchUploading.textValid',
+        text: langRes.batchUploading.textValid
+    },
+    textInvalid: {
+        key: 'batchUploading.textInvalid',
+        text: langRes.batchUploading.textInvalid
     }
 }
 

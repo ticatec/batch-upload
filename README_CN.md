@@ -1,149 +1,101 @@
-# Excel 数据批量上传处理组件
+# Excel 数据批量上传处理组件 / 数据识别组件
 
 [[English Document](./README.md)]
 
-本组件用于从 Excel 文件批量导入数据并上传处理。支持上传状态管理、错误行导出、多语言适配、数据预处理等功能。通过定义模板类和统一的 UI 弹窗组件，快速适配不同类型的 Excel 数据上传需求。
+# @ticatec/batch-data-uploader
 
-## 功能特性
-
-* 解析 `.xls` / `.xlsx` 文件
-* 自定义列映射与格式化
-* 批量上传，支持设置上传批次大小
-* 可扩展数据预处理逻辑（如合并、分组）
-* 支持上传状态展示：待处理、上传中、成功、失败
-* 错误行导出为 Excel 文件
-* 多语言支持（基于 `@ticatec/i18n`）
+一个通用的批量上传数据的 Svelte 组件，支持 Excel 文件解析、本地预处理、字段匹配验证、多语言提示、导入校验与错误提示。
 
 ---
 
-## 使用方式
+## ✨ 功能特色
 
-### 安装
+- 📂 支持拖拽上传和选择上传 `.xlsx` 文件
+- 🧠 本地解析 Excel 数据，无需服务器预处理
+- 🧩 支持字段映射与自定义解析器
+- 📝 预览与校验数据，错误项高亮提示
+- 🌐 多语言支持（内建中英文）
+- 🔌 适配 `@ticatec/uniface-element` 的 UI 元素风格
 
-```shell
-npm i @ticatec/batch-data-uploader
-```
+---
 
-### 1. 定义模板类
+## 📦 安装
 
-继承自 `BaseTemplate`，传入字段定义、上传逻辑，并可选地重载 `consolidateData` 处理数据。
+```bash
+npm install @ticatec/batch-data-uploader xlsx
+````
 
-```ts
-import BaseUploadTemplate from '@ticatec//BaseUploadTemplate';
-import type DataColumn from './DataColumn';
+---
 
-class MyDataTemplate extends BaseUploadTemplate {
-  constructor(uploadFun: UploadFun) {
-    const columns: DataColumn[] = [
-      { text: 'Name', field: 'name', pos: 0 },
-      { text: 'Email', field: 'email', pos: 1 },
-      { text: 'Age', field: 'age', pos: 2, parser: val => parseInt(val) },
-    ];
-    super(columns, uploadFun, 50);
-  }
+## 📁 项目结构
 
-  // 可选：重写以实现合并/归组等逻辑
-  protected consolidateData(rows: Array<any>) {
-    return super.consolidateData(rows);
-  }
+主要组件和类如下：
+
+| 文件                       | 描述                                            |
+| ------------------------ | --------------------------------------------- |
+| `FileUploadWizard.svelte` | 主上传对话框，使用 `BaseUploadTemplate` 上传并验证数据        |
+| `EncodingWizard.svelte`  | 字段映射对话框，使用 `BaseEncodingTemplate` 映射 Excel 字段 |
+| `BaseTemplate.ts`        | 抽象基类，封装了 Excel 解析与列定义逻辑                       |
+| `BaseUploadTemplate.ts`  | 上传模板基类，用于校验、预处理和上传数据                          |
+| `BaseEncodingTemplate.ts` | 编码模板基类，用于动态字段映射与转换                            |
+| `utils.ts`               | 工具函数，如 `setNestedValue` 与 `getNestedValue`    |
+| `i18n_resources`         | 多语言资源定义，支持中英文切换                               |
+
+---
+## 🚀 使用方式
+
+### 批量数据上传
+
+[实现批量数据上传](./documents/FileUploadWizard_cn.md)
+
+### 数据解析和校验
+
+[实现数据解析和校验](./documents/EncodingWizard_cn.md)
+
+## 🌐 多语言支持
+
+通过依赖 `@ticatec/i18n` 和 `i18n_resources`，支持中英文自动切换。你可以通过扩展 `i18nKeys` 与资源文件进行国际化定制。
+
+中文资源文件，可以通过i18的工具加载。
+
+```json
+{
+    "batchUploading": {
+        "status": {
+            "pending": "待上传",
+            "uploading": "正在上传...",
+            "successful": "成功",
+            "fail": "失败"
+        },
+        "parsing": "正在解析文件...",
+        "parseFailure": "无法解析文件：{{name}}",
+        "waitUploading": "上传中无法退出！",
+        "button": {
+            "upload": "上传",
+            "save": "保存错误数据",
+            "open": "打开",
+            "confirm": "确定"
+        },
+        "errorTitle": "错误",
+        "sheetName": "异常数据",
+        "labelStatus": "状态",
+        "labelValid": "有效性",
+        "textValid": "是",
+        "textInvalid": "否"
+    }
 }
 ```
+---
 
-### 2. 引入并使用上传对话框组件
+## 🧪 示例
 
-```svelte
-<script lang="ts">
-  import UploadDialog from './UploadDialog.svelte';
-  import {MyDataTemplate} from './MyDataTemplate';
-
-  let showDialog = false;
-
-  function doUpload(rows: any[]): Promise<void> {
-    let list = rows.map(row=>row.data);
-    return fetch('/api/upload', {
-      method: 'POST',
-      body: JSON.stringify(dataChunk),
-    }).then(res => {
-      if (!res.ok) throw new Error('Upload failed');
-      //上传完毕需要结果写入到row.error里面
-    });
-  }
-
-  const template = new MyDataTemplate(doUpload);
-  
-  const showUploadDialog = () => {
-    window.Dialog.showModal(UploadDialog, {title: '批量新增雇员', template, });
-  }
-  
-</script>
-
-<button on:click={() => {showUploadDialog}>导入数据</button>
-
-```
+请查看 `src/routes/+page.svelte` 示例页，包含完整的使用流程和模板定义。
 
 ---
 
-## 参数说明
+## 🪪 License
 
-### `BaseTemplate` 构造参数
-
-| 参数名         | 类型                              | 说明                 |
-| ----------- | ------------------------------- | ------------------ |
-| `columns`   | `DataColumn[]`                  | 定义 Excel 中字段的位置与格式 |
-| `uploadFun` | `(arr: any[]) => Promise<void>` | 上传函数，分批调用          |
-| `batchSize` | `number`（默认 50）                 | 每批上传的数据量           |
-| `rowOffset` | `number`（默认 1）                  | 数据起始行偏移量（跳过标题等）    |
-
-### `DataColumn` 字段定义
-
-```ts
-interface DataColumn {
-  text: string;             // 表头展示文本
-  field: string;            // 数据字段路径（支持嵌套）
-  pos: number;              // 所在 Excel 列索引，从 0 开始
-  parser?: (val: any) => any; // 可解析函数，用于解析单元格的数据
-}
-```
-
----
-
-## 上传流程说明
-
-1. 用户选择 Excel 文件
-2. 调用 `BaseTemplate.parseExcelFile(file)` 解析数据
-3. 展示预览数据表格，状态为 `Pending`
-4. 用户点击上传，系统按批次调用 `uploadFun`
-5. 成功项标记为成功，失败项保留 `error` 信息
-6. 可导出失败行为 Excel
-
----
-
-## 错误数据导出
-
-使用 `BaseTemplate.exportErrorRowsToExcel(filename: string)` 将失败的数据导出为 Excel 文件，包含原始列与错误信息列。
-
----
-
-## 自定义扩展
-
-* **自定义列显示内容**：可自定义每列字段及格式化函数
-* **自定义状态字段**：状态由内置 `status` 列展示，可根据实际业务调整
-* **数据清洗与校验**：在 `consolidateData()` 方法中实现
-* **多语言文本**：使用 `@ticatec/i18n` 提供的 `getI18nText` 获取
-
----
-
-## 依赖项
-
-* [`xlsx`](https://www.npmjs.com/package/xlsx)
-* [`@ticatec/uniface-element`](https://www.npmjs.com/package/@ticatec/uniface-element)
-* [`@ticatec/i18n`](https://www.npmjs.com/package/@ticatec/i18n)
-
----
-
-## License
-
-MIT License.
+MIT License © Ticatec
 
 ---
 

@@ -7,12 +7,12 @@ import utils from "$lib/utils";
 import * as XLSX from 'xlsx';
 
 
-export type UploadFun = (arr: Array<any>) => Promise<void>;
+export type UploadFun = (arr: Array<any>) => Promise<Array<any>>;
 export type UpdateProgressStatus = () => void;
 
-const statusColumn: TableColumn =  {
-    text: "status",
-    width: 150,
+const statusColumn: TableColumn = {
+    text: getI18nText(i18nKeys.labelStatus),
+    width: 240,
     resizable: true,
     formatter: row => {
         if (row.status == 'P') {
@@ -31,13 +31,11 @@ const statusColumn: TableColumn =  {
 
 export default abstract class BaseUploadTemplate extends BaseTemplate {
 
-    protected uploadFun: UploadFun;
     protected batchSize: number;
     protected updateProgressStatus: UpdateProgressStatus | null = null;
 
-    protected constructor(columns: Array<DataColumn>, uploadFun: UploadFun, batchSize: number = 50, rowOffset: number = 1) {
-        super(columns, rowOffset);;
-        this.uploadFun = uploadFun;
+    protected constructor(columns: Array<DataColumn>, batchSize: number = 50, rowOffset: number = 1) {
+        super(columns, rowOffset);
         this.batchSize = batchSize;
     }
 
@@ -49,16 +47,26 @@ export default abstract class BaseUploadTemplate extends BaseTemplate {
         this.updateProgressStatus = value;
     }
 
+    protected abstract uploadData(list: Array<any>): Promise<Array<any>>;
+
     /**
      * 上传数据
      */
     async upload() {
-        for (let i = 0; i < this.list.length; i += this.batchSize) {
-            const chunk = this.list.slice(i, i + this.batchSize);
-            chunk.forEach(item=>item.status='U');
+        for (let i = 0; i < this._list.length; i += this.batchSize) {
+            const chunk = this._list.slice(i, i + this.batchSize);
+            chunk.forEach(item => item.status = 'U');
             this.updateProgressStatus?.();
-            await this.uploadFun(chunk);
-            chunk.forEach(item=>item.status='D');
+            let list = await this.uploadData(this.extractData(chunk));
+            for (let j = 0; j < chunk.length; j++) {
+                this._list[i + j].status = 'D';
+                if (list[j]) {
+                    if (list[j].error) {
+                        this._list[i + j].error = list[j].error;
+                        this._list[i + j].errorText = list[j].errorText;
+                    }
+                }
+            }
             this.updateProgressStatus?.();
         }
     }
@@ -76,7 +84,7 @@ export default abstract class BaseUploadTemplate extends BaseTemplate {
      * 获取表格的列定义
      */
     get columns(): Array<TableColumn> {
-        return [...this._columns.map(col=> ({...col, field: `data.${col.field}`})), statusColumn];
+        return [...this._columns.map(col => ({...col, field: `data.${col.field}`})), statusColumn];
     }
 
     /**

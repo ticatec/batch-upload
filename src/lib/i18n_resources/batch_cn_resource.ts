@@ -15,7 +15,8 @@ const langRes = {
             open: '文件'
         },
         errorTitle: '异常原因',
-        sheetName: '错误数据'
+        sheetName: '错误数据',
+        labelStatus: "状态"
     }
 }
 

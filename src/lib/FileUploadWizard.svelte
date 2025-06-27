@@ -2,21 +2,19 @@
     import Dialog from "@ticatec/uniface-element/Dialog";
     import type {ButtonAction, ButtonActions} from "@ticatec/uniface-element/ActionBar";
     import DataTable, {type IndicatorColumn} from "@ticatec/uniface-element/DataTable";
-    import i18n, {getI18nText} from "@ticatec/i18n";
+    import {getI18nText} from "@ticatec/i18n";
     import Box from "@ticatec/uniface-element/Box"
     import {onMount} from "svelte";
-    import type BaseTemplate from "$lib/BaseTemplate";
-    import type DataColumn from "@ticatec/uniface-element/DataTable";
+    import type DataColumn from "./DataColumn";
     import i18nKeys from "$lib/i18n_resources/i18nKeys";
     import type BaseUploadTemplate from "$lib/BaseUploadTemplate.js";
 
     export let title: string;
-
     export let width: string = "800px";
     export let height: string = "600px"
-
     export let closeHandler: any;
     export let template: BaseUploadTemplate;
+    export let afterUploaded: ()=>Promise<void>;
 
     type ProcessStatus = 'Init' | 'Pending' | 'Uploading' | 'Done';  //初始状态，待上传，上传中，处理完成
 
@@ -27,6 +25,7 @@
         label: getI18nText(i18nKeys.button.open),
         type: 'primary',
         handler: () => {
+            uploadField.value = '';
             uploadField.click();
         }
     }
@@ -38,6 +37,7 @@
             status = 'Uploading';
             try {
                 await template.upload();
+                await afterUploaded?.();
             } finally {
                 status = 'Done';
             }
@@ -58,16 +58,18 @@
     let filename: string;
 
     const parseExcelFile = async (excelFile: File) => {
-        filename = excelFile.name;
-        window.Indicator.show(getI18nText(i18nKeys.parsing));
-        try {
-            await template.parseExcelFile(excelFile);
-            list = template.list;
-            status = list.length > 0 ? 'Pending' : 'Init';
-        } catch (ex) {
-            window.Toast.show(getI18nText(i18nKeys.parseFailure, {name: excelFile.name}));
-        } finally {
-            window.Indicator.hide();
+        if (excelFile) {
+            filename = excelFile.name;
+            window.Indicator.show(getI18nText(i18nKeys.parsing));
+            try {
+                await template.parseExcelFile(excelFile);
+                list = template.list;
+                status = list.length > 0 ? 'Pending' : 'Init';
+            } catch (ex) {
+                window.Toast.show(getI18nText(i18nKeys.parseFailure, {name: excelFile.name}));
+            } finally {
+                window.Indicator.hide();
+            }
         }
     }
 
@@ -84,7 +86,7 @@
 
 
     const indicatorColumn: IndicatorColumn = {
-        width: 60,
+        width: 40,
         selectable: false,
         displayNo: true
     }

@@ -1,21 +1,26 @@
 const langRes = {
     batchUploading: {
         status: {
-            pending: 'To upload',
+            pending: "To upload",
             uploading: "Uploading...",
-            successful: 'Success',
-            fail: 'Failure'
+            successful: "Success",
+            fail: "Failure"
         },
-        parsing: 'Parsing file...',
-        parseFailure: 'Cannot parse file: {{name}}',
-        waitUploading: 'Cannot exit on uploading!',
+        parsing: "Parsing file...",
+        parseFailure: "Cannot parse file: {{name}}",
+        waitUploading: "Cannot exit during uploading!",
         button: {
-            upload: 'Upload',
-            save: 'Error data',
-            open: 'File'
+            upload: "Upload",
+            save: "Save error data",
+            open: "Open",
+            confirm: "Confirm"
         },
-        errorTitle: 'Error',
-        sheetName: 'Abnormal data'
+        errorTitle: "Error",
+        sheetName: "Abnormal data",
+        labelStatus: "Status",
+        labelValid: "Validity",
+        textValid: "Yes",
+        textInvalid: "No"
     }
 }
 

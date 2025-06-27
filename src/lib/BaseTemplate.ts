@@ -20,8 +20,6 @@ export default abstract class BaseTemplate {
         this.rowOffset = rowOffset;
     }
 
-
-
     /**
      * 整理数据，在子类可以通过重载完成数据的二次处理
      * @param rows
@@ -46,8 +44,9 @@ export default abstract class BaseTemplate {
         for (let rowIndex = range.s.r + this.rowOffset; rowIndex <= range.e.r; rowIndex++) {
             const rowObject: any = {};
 
-            for (const colDef of this._columns) {
-                const cellAddress = {r: rowIndex, c: colDef.pos};
+            for (let i=0; i<this._columns.length; i++) {
+                const colDef = this._columns[i];
+                const cellAddress = {r: rowIndex, c: i};
                 const cellRef = XLSX.utils.encode_cell(cellAddress);
                 const cell = sheet[cellRef];
                 const rawValue = cell?.v;
@@ -57,6 +56,23 @@ export default abstract class BaseTemplate {
             rows.push(this.wrapData(rowObject));
         }
         this._list = await this.consolidateData(rows);
+    }
+
+    /**
+     * 获取实际待上传的数据
+     * @param arr
+     */
+    protected extractData(arr: Array<any>) {
+        let list= arr.map(item => {
+            let result : any = {};
+            for (let col of this._columns) {
+                if (col.visible != false && col.ignore != false) {
+                    utils.setNestedValue(result, col.field, utils.getNestedValue(item.data, col.field));
+                }
+            }
+            return result;
+        });
+        return list;
     }
 
     /**
