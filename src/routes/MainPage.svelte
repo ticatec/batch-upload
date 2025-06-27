@@ -11,19 +11,7 @@
     import EncodingWizard from "$lib/EncodingWizard.svelte";
 
     const uploadData = () => {
-        let template = new EmployeesTemplate(async (rows: Array<any>) => {
-            console.log("开始上传数据", rows);
-            return new Promise((resolve)=>{
-                let list:Array<any> = rows.map(item=>({}));
-                for (let i=0; i<rows.length; i++) {
-                    let code = Math.round(Math.random() * 1000)
-                    if ( code > 800) {
-                        list[i].error = code
-                    }
-                }
-                setTimeout(()=> {resolve(list)}, 1000)
-            });
-        }, 5);
+        let template = new EmployeesTemplate(5);
         window.Dialog.showModal(FileUploadWizard, {template, width: "1240px",  title: '批量上传员工'})
     }
 

@@ -73,7 +73,7 @@ export default class ProductTemplate extends BaseEncodingTemplate {
         return new Promise((resolve) => {
             let list = rows.map(item=> {
                 let tmp = JSON.parse(JSON.stringify(item));
-                if (Math.random() > 0.05) {
+                if (Math.random() > 0.1) {
                     tmp.code = ((new Date()).getTime() * 10000 + Math.floor(Math.random() * 10000)).toString(36);
                 }
                 return tmp;

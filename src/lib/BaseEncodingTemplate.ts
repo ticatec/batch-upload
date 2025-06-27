@@ -15,7 +15,7 @@ export default abstract class BaseEncodingTemplate extends BaseTemplate {
         width: 90,
         align: 'center',
         escapeHTML: true,
-        formatter: row => this.isRowValid(row) ? ValidData : InvalidData
+        formatter: row => this.isDataValid(row) ? ValidData : InvalidData
     }
 
     protected constructor(columns: Array<DataColumn>, rowOffset: number = 1) {
@@ -27,7 +27,7 @@ export default abstract class BaseEncodingTemplate extends BaseTemplate {
      * @param row
      * @protected
      */
-    protected abstract isRowValid(row: any): boolean;
+    protected abstract isDataValid(row: any): boolean;
 
     /**
      *

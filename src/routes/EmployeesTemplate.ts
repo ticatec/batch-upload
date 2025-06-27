@@ -1,4 +1,3 @@
-
 import type DataColumn from "$lib/DataColumn";
 import BaseUploadTemplate, {type UploadFun} from "$lib/BaseUploadTemplate";
 
@@ -67,9 +66,25 @@ let columns: Array<DataColumn> = [
     }
 ]
 export default class EmployeesTemplate extends BaseUploadTemplate {
+    protected uploadData(rows: Array<any>): Promise<Array<any>> {
+        console.log("开始上传数据", rows);
+        return new Promise((resolve) => {
+            let list: Array<any> = rows.map(item => ({}));
+            for (let i = 0; i < rows.length; i++) {
+                let code = Math.round(Math.random() * 1000)
+                if (code > 800) {
+                    list[i].error = code
+                }
+            }
+            setTimeout(() => {
+                resolve(list)
+            }, 1000)
+        });
 
-    constructor(uploadFun: UploadFun, batchSize: number = 50, rowOffset: number = 1) {
-        super(columns, uploadFun, batchSize, rowOffset);
+    }
+
+    constructor(batchSize: number = 50, rowOffset: number = 1) {
+        super(columns, batchSize, rowOffset);
     }
 
 }
