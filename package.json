@@ -1,6 +1,6 @@
 {
   "name": "@ticatec/batch-data-uploader",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A reusable Svelte component for batch uploading Excel data with support for error handling, multi-language, and preprocessing.",
   "scripts": {
     "dev": "vite dev",
@@ -92,5 +92,13 @@
   "private": false,
   "dependencies": {
     "xlsx": "^0.18.5"
-  }
+  },
+  "repository": {
+    "type": "https",
+    "url": "https://github.com/ticatec/batch-upload.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ticatec/batch-upload/issues"
+  },
+  "homepage": "https://github.com/ticatec/batch-upload"
 }
